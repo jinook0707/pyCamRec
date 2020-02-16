@@ -584,23 +584,24 @@ class CamRecFrame(wx.Frame):
     
     #-------------------------------------------------------------------
 
-    def onButtonPressDown(self, event, flag=''):
+    def onButtonPressDown(self, event, objName=''):
         """ wx.Butotn was pressed.
         
         Args:
             event (wx.Event)
-            flag (str, optional): Specifying intended operation of
-              the function call.
+            objName (str, optional): objName to emulate the button press
+              of the button with the given name.
         
         Returns:
             None
         """
         if DEBUG: print("CamRecFrame.onButtonPressDown()")
 
-        objName = ''
-        if flag == '':
+        if objName == '':
             obj = event.GetEventObject()
             objName = obj.GetName()
+        else:
+            obj = wx.FindWindowByName(objName, self.panel["ui"])
         if not obj.IsEnabled(): return
 
         if objName in ["addCam_btn", "remCam_btn"]:
