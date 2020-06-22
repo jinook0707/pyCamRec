@@ -271,7 +271,7 @@ class CamRecFrame(wx.Frame):
         icon = wx.Icon("icon.ico")
         self.tbIcon.SetIcon(icon)
         
-        ##### beginning of setting up attributes -----
+        ##### [begin] class attributes -----
         self.logFile = "pCR_log.txt"
         self.recFolder = "recordings"
         self.w_pos = w_pos # window position
@@ -307,7 +307,12 @@ class CamRecFrame(wx.Frame):
         self.rDur_sTxt = None # for showing recording duration
         self.preview_sBmp = None # for showing preview of selected cam
         self.disp_sBmp = None # for showing recording view of cam(s)
-        ##### end of setting up attributes -----
+        self.dispImgRefreshIntv = 50 # Interval to refresh the combined frame
+          # images from each cam. Increase this interval, if the image lags
+          # then eventually the app gets frozen after a while.
+        ##### [end] class attributes -----
+        
+        
         if not path.isdir(self.recFolder): # recording folder doesn't exist
             mkdir(self.recFolder) # make one
         if not path.isfile(self.logFile): # log file doesn't exist
@@ -351,6 +356,7 @@ class CamRecFrame(wx.Frame):
                             choices=_choices,
                        )
         cho.Bind(wx.EVT_CHOICE, self.onChoice)
+        cho.SetSelection(0)
         add2gbs(self.gbs["ui"], cho, (row,col), (1,1))
         row += 1; col = 0
         sTxt = setupStaticText(
@@ -384,6 +390,7 @@ class CamRecFrame(wx.Frame):
                             choices=['video', 'image'],
                        )
         cho.Bind(wx.EVT_CHOICE, self.onChoice)
+        cho.SetSelection(0)
         add2gbs(self.gbs["ui"], cho, (row,col), (1,1))
         row += 1; col = 0
         sTxt = setupStaticText(
@@ -823,7 +830,7 @@ class CamRecFrame(wx.Frame):
             else:
                 self.timer["chkQ2M"] = wx.Timer(self)
                 self.Bind(wx.EVT_TIMER, self.chkQ2M, self.timer["chkQ2M"])
-                self.timer["chkQ2M"].Start(50)
+                self.timer["chkQ2M"].Start(self.dispImgRefreshIntv)
             # log message
             log = "%s, Cam-%.2i thread started\n"%(get_time_stamp(), ci)
 
